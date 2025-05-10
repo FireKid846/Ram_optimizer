@@ -3,7 +3,7 @@
 <div align="center">
 
 ![Banner](https://img.shields.io/badge/RAM%20Optimizer-Non--Root%20Android%20Gaming-blue)
-![Version](https://img.shields.io/badge/Version-1.0.0-green)
+![Version](https://img.shields.io/badge/Version-1.0.1-green)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 ![Platform](https://img.shields.io/badge/Platform-Android%207+-orange)
 ![Status](https://img.shields.io/badge/Status-Active-brightgreen)
@@ -55,6 +55,15 @@ RAM Optimizer is a lightweight yet powerful tool designed to enhance your Androi
 - **Lower Device Temperature**: Reduce CPU temperature by up to 5°C
 - **Improved Responsiveness**: Experience smoother app transitions and reduced lag
 
+## 🆕 Recent Improvements in v1.0.1
+
+- **Menu Navigation Fix**: Fixed the issue where consecutive menu selections weren't working
+- **Enhanced Error Handling**: Added robust error checking for all external commands
+- **Better Dependency Checking**: Now verifies that required tools like `jq` are installed
+- **Improved Monitoring Process**: Added better logging for the monitoring process to help troubleshoot issues
+- **Exit Option in Settings**: Added option to return from settings menu without making changes
+- **Better Notification Handling**: Added error handling for all notification commands
+
 ## 📱 System Requirements
 
 - Android device running Android 7.0 (Nougat) or higher
@@ -102,16 +111,13 @@ Launch the full interactive interface with:
 ./ram_optimizer.sh
 ```
 
-### Command Line Options
-```bash
-./ram_optimizer.sh --start    # Start the optimizer service in background
-./ram_optimizer.sh --stop     # Stop the running optimizer service
-./ram_optimizer.sh --status   # Display current system statistics
-./ram_optimizer.sh --boost    # Perform immediate memory optimization
-./ram_optimizer.sh --config   # View or modify configuration settings
-./ram_optimizer.sh --temp     # Check current battery temperature
-./ram_optimizer.sh --help     # Show complete help message
-```
+Use the menu to access all features:
+1. Start Display Optimization
+2. Stop Display Optimization
+3. Show Status
+4. Perform Manual Boost
+5. Edit Settings
+6. Exit
 
 ## ⚙️ Advanced Configuration
 
@@ -195,6 +201,7 @@ The RAM Optimizer is designed with battery efficiency in mind:
 | **Script crashes on startup** | Check system compatibility with `uname -a` |
 | **No temperature reading** | Some devices don't expose temperature sensors |
 | **Brightness control not working** | Ensure display permissions are granted to Termux |
+| **Menu options stop working** | This issue has been fixed in v1.0.1 |
 
 For additional help, open an issue on the GitHub repository.
 
@@ -210,7 +217,16 @@ RAM Optimizer has been tested on various Android devices:
 
 ## 🔄 Update History
 
-### Version 1.0.0 (Current)
+### Version 1.0.1 (Current)
+- Fixed menu navigation issue with consecutive selections
+- Added robust error handling for all external commands
+- Improved dependency checking
+- Enhanced monitoring process with better logging
+- Added exit option in settings menu
+- Added better notification handling
+- Improved overall stability and resilience
+
+### Version 1.0.0
 - Initial release with core functionality
 - Display brightness management
 - System statistics monitoring

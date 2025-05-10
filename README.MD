@@ -6,6 +6,10 @@
 ![Version](https://img.shields.io/badge/Version-1.0.0-green)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 
+<a href="https://www.apkmirror.com/apk/fredrik-fornwall/termux-fdroid-version/termux-f-droid-version-0-119-0-beta-2-release/termux-f-droid-version-0-119-0-beta-2-android-apk-download/download/?key=41b166e27470f19a944c3e7a5951112c4d007867">
+  <img src="https://img.shields.io/badge/Download%20Termux-APK-brightgreen?style=for-the-badge&logo=android" alt="Download Termux APK">
+</a>
+
 </div>
 
 A lightweight, non-root system resource optimizer for Android that enhances device performance without requiring root access.
@@ -21,7 +25,7 @@ A lightweight, non-root system resource optimizer for Android that enhances devi
 ## 📱 Requirements
 
 - Android device (no root required)
-- [Termux](https://f-droid.org/en/packages/com.termux/) app installed
+- Termux app installed (click the download button above or get it from [F-Droid](https://f-droid.org/en/packages/com.termux/))
 - Required packages: `bash`, `jq`, `termux-api`
 
 ## 📋 Installation

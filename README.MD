@@ -1,9 +1,9 @@
-# RAM Optimizer for Android
+# Gaming RAM Optimizer for Android
 
 <div align="center">
 
-![Banner](https://img.shields.io/badge/RAM%20Optimizer-Non--Root%20Android%20Gaming-blue)
-![Version](https://img.shields.io/badge/Version-1.0.1-green)
+![Banner](https://img.shields.io/badge/Gaming%20RAM%20Optimizer-Android%20Performance-blue)
+![Version](https://img.shields.io/badge/Version-2.0.0-green)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 ![Platform](https://img.shields.io/badge/Platform-Android%207+-orange)
 ![Status](https://img.shields.io/badge/Status-Active-brightgreen)
@@ -15,61 +15,60 @@
 </div>
 
 <p align="center">
-  <b>A powerful system resource optimizer for Android that enhances device performance without requiring root access</b>
+  <b>Enhanced gaming performance for Android devices with specialized game profiles and advanced memory optimization</b>
 </p>
-
-<div align="center">
-  <img src="https://raw.githubusercontent.com/FireKid846/Ram_optimizer/main/screenshots/banner.png" alt="RAM Optimizer Banner" width="80%">
-</div>
 
 ## 🔍 Overview
 
-RAM Optimizer is a lightweight yet powerful tool designed to enhance your Android device's performance. It monitors system resources, manages display brightness, and optimizes memory usage - all without requiring root access. Perfect for extending battery life and improving overall device responsiveness.
+Gaming RAM Optimizer is a specialized system resource manager designed specifically for mobile gamers. It enhances gaming performance through targeted memory management, CPU optimization, and display settings tailored to popular mobile games - all without requiring root access (though some features are enhanced with root privileges).
 
-### ✨ Why Choose RAM Optimizer?
+### ✨ Why Choose Gaming RAM Optimizer?
 
-- **No Root Required**: Works on any Android device without compromising security
+- **Game-Specific Profiles**: Optimized settings for CODM, Free Fire, Bloodstrike, Delta Force
+- **No Root Required**: Core features work on any Android device (enhanced with root)
 - **Lightweight**: Minimal impact on system resources while running
-- **Battery Friendly**: Focuses on extending battery life, not consuming it
-- **User Friendly**: Simple interface with both interactive and command-line options
+- **Gaming Mode**: Special high-performance mode activated during gaming sessions
 - **Open Source**: Fully transparent codebase you can trust
 
 ## 🚀 Feature Highlights
 
 | Feature | Description |
 |---------|-------------|
-| **Display Brightness Control** | Intelligently adjusts screen brightness to conserve battery |
-| **System Statistics Monitor** | Real-time tracking of RAM, CPU, and battery metrics |
-| **Battery Temperature Alerts** | Proactive warnings when device temperature rises too high |
-| **Memory Optimization** | On-demand RAM cleaner to free up system resources |
-| **Clean Interface** | Minimalist design that stays out of your way |
+| **Game Profiles** | Specialized optimization for popular mobile games |
+| **Gaming Mode** | High-performance mode with maximized brightness and CPU priority |
+| **Real-time Monitoring** | Track RAM, CPU, and battery metrics during gameplay |
+| **Temperature Alerts** | Get warnings when device temperature rises too high |
+| **Automatic & Manual Boosting** | Free up memory on demand or on a schedule |
+| **Custom Priority Management** | Prioritize game processes for smoother gameplay |
 
 <div align="center">
-  <img src="https://raw.githubusercontent.com/FireKid846/Ram_optimizer/main/screenshots/features.png" alt="Feature Overview" width="90%">
+  <img src="https://raw.githubusercontent.com/user/Gaming_RAM_Optimizer/main/screenshots/main_screen.png" alt="Feature Overview" width="90%">
 </div>
 
 ## 📊 Performance Benefits
 
-- **Reduced RAM Usage**: Free up to 30% of occupied RAM
-- **Extended Battery Life**: Gain up to 2 hours of additional usage time
-- **Lower Device Temperature**: Reduce CPU temperature by up to 5°C
-- **Improved Responsiveness**: Experience smoother app transitions and reduced lag
+- **Reduced Game Stuttering**: Experience smoother gameplay with fewer frame drops
+- **Better Game Loading**: Faster load times for game assets and levels
+- **Extended Battery Life during Gaming**: Optimize non-essential processes
+- **Lower Device Temperature**: Prevent thermal throttling during intense gaming sessions
+- **Improved Overall Responsiveness**: More responsive controls and UI during gameplay
 
-## 🆕 Recent Improvements in v1.0.1
+## 🆕 Key Features in v2.0.0
 
-- **Menu Navigation Fix**: Fixed the issue where consecutive menu selections weren't working
-- **Enhanced Error Handling**: Added robust error checking for all external commands
-- **Better Dependency Checking**: Now verifies that required tools like `jq` are installed
-- **Improved Monitoring Process**: Added better logging for the monitoring process to help troubleshoot issues
-- **Exit Option in Settings**: Added option to return from settings menu without making changes
-- **Better Notification Handling**: Added error handling for all notification commands
+- **Game Profile System**: Specialized optimization for popular mobile games
+- **Gaming Mode**: Enhanced performance mode specifically for gaming sessions
+- **App Priority Management**: Prioritize game processes over background apps
+- **Temperature Monitoring**: Get alerts when your device is running too hot
+- **Automatic RAM Boosting**: Schedule automatic memory optimization
+- **Detailed System Statistics**: Real-time monitoring of all system resources
+- **Command-line Interface**: Control all features via simple commands
 
 ## 📱 System Requirements
 
 - Android device running Android 7.0 (Nougat) or higher
 - Termux app installed (click the download button above)
 - At least 10MB of free storage space
-- Required packages: `bash`, `jq`, `termux-api`
+- Required packages: `bash`, `jq`, `bc`, `termux-api` (optional but recommended)
 
 ## 📥 Installation Guide
 
@@ -80,17 +79,17 @@ Download and install Termux using the download button above or from [F-Droid](ht
 Open Termux and run the following commands:
 ```bash
 pkg update && pkg upgrade -y
-pkg install bash jq termux-api -y
+pkg install bash jq bc termux-api -y
 ```
 
 ### Step 3: Clone the Repository
 ```bash
-git clone https://github.com/FireKid846/Ram_optimizer.git
+git clone https://github.com/user/Gaming_RAM_Optimizer.git
 ```
 
 ### Step 4: Make the Script Executable
 ```bash
-cd Ram_optimizer
+cd Gaming_RAM_Optimizer
 chmod +x ram_optimizer.sh
 ```
 
@@ -98,10 +97,6 @@ chmod +x ram_optimizer.sh
 ```bash
 ./ram_optimizer.sh
 ```
-
-<div align="center">
-  <img src="https://raw.githubusercontent.com/FireKid846/Ram_optimizer/main/screenshots/installation.png" alt="Installation Process" width="70%">
-</div>
 
 ## 📖 Usage Instructions
 
@@ -111,28 +106,79 @@ Launch the full interactive interface with:
 ./ram_optimizer.sh
 ```
 
-Use the menu to access all features:
-1. Start Display Optimization
-2. Stop Display Optimization
-3. Show Status
-4. Perform Manual Boost
-5. Edit Settings
-6. Exit
+### Command-line Options
+The script also supports command-line arguments for non-interactive use:
 
-## ⚙️ Advanced Configuration
+```bash
+# Start RAM optimization
+./ram_optimizer.sh --start
 
-Create a custom configuration file at `~/.config/ram_optimizer/config.json` with the following options:
+# Stop RAM optimization
+./ram_optimizer.sh --stop
+
+# Perform RAM boost
+./ram_optimizer.sh --boost
+
+# Display system status
+./ram_optimizer.sh --status
+
+# Activate a game profile
+./ram_optimizer.sh --game codm
+
+# Show help
+./ram_optimizer.sh --help
+```
+
+## 🎮 Game Profiles
+
+The optimizer includes specialized profiles for popular mobile games:
+
+| Game | Package Name | Optimizations |
+|------|--------------|--------------|
+| **Call of Duty Mobile** | com.activision.callofduty.shooter | Priority boost, background app management |
+| **Free Fire** | com.dts.freefireth, com.dts.freefiremax | Memory optimization, display settings |
+| **Bloodstrike** | com.netease.bloodstrike | CPU priority, background process management |
+| **Delta Force** | com.proximabeta.deltaforce | Memory allocation, process prioritization |
+
+When a game profile is activated:
+- The selected game receives processing priority
+- Non-essential background apps are closed
+- Display brightness is maximized
+- CPU governor is set to performance mode (if available)
+- Automatic memory boosting is enabled
+
+## ⚙️ Configuration Options
+
+The Gaming RAM Optimizer stores its configuration in a JSON file that can be modified through the interactive menu:
 
 ```json
 {
-  "brightness_control": true,
-  "min_brightness": 30,
-  "max_brightness": 80,
-  "temperature_warnings": true,
-  "critical_temp": 42,
-  "warning_temp": 39,
-  "stat_refresh_rate": 5,
-  "aggressive_optimization": false
+  "settings": {
+    "dim_brightness": true,
+    "show_battery_stats": true,
+    "auto_boost": true,
+    "boost_interval": 300,
+    "gaming_mode": false,
+    "current_game_profile": "none"
+  },
+  "game_profiles": {
+    "codm": {
+      "priority_apps": ["com.activision.callofduty.shooter"],
+      "kill_list": ["com.facebook.katana", "com.instagram.android"]
+    },
+    "free_fire": {
+      "priority_apps": ["com.dts.freefireth", "com.dts.freefiremax"],
+      "kill_list": ["com.facebook.katana", "com.instagram.android"]
+    },
+    "bloodstrike": {
+      "priority_apps": ["com.netease.bloodstrike"],
+      "kill_list": ["com.facebook.katana", "com.instagram.android"]
+    },
+    "delta_force": {
+      "priority_apps": ["com.proximabeta.deltaforce"],
+      "kill_list": ["com.facebook.katana", "com.instagram.android"]
+    }
+  }
 }
 ```
 
@@ -140,55 +186,50 @@ Create a custom configuration file at `~/.config/ram_optimizer/config.json` with
 
 | Option | Description | Default |
 |--------|-------------|---------|
-| `brightness_control` | Enable automatic brightness management | `true` |
-| `min_brightness` | Minimum brightness level (%) | `30` |
-| `max_brightness` | Maximum brightness level (%) | `80` |
-| `temperature_warnings` | Enable temperature alert notifications | `true` |
-| `critical_temp` | Critical temperature threshold (°C) | `42` |
-| `warning_temp` | Warning temperature threshold (°C) | `39` |
-| `stat_refresh_rate` | System stats refresh interval (seconds) | `5` |
-| `aggressive_optimization` | Use more aggressive RAM clearing (may affect multitasking) | `false` |
+| `dim_brightness` | Enable automatic brightness management | `true` |
+| `show_battery_stats` | Show battery statistics in status | `true` |
+| `auto_boost` | Enable automatic RAM boosting | `true` |
+| `boost_interval` | Seconds between automatic boosts | `300` |
+| `gaming_mode` | High-performance mode for gaming | `false` |
+| `current_game_profile` | Currently active game profile | `none` |
 
 ## 📊 How It Works
 
-### System Monitoring Architecture
-The RAM Optimizer continuously monitors key system metrics through Termux API calls:
+### Memory Optimization
 
-1. **Data Collection Layer**
-   - Gathers RAM usage statistics
-   - Monitors CPU utilization across cores
-   - Tracks battery level and temperature
+The memory optimization process:
+1. Captures current memory state
+2. Flushes system caches using appropriate commands
+3. Clears application caches when possible
+4. Measures freed memory and reports results
 
-2. **Analysis Engine**
-   - Processes collected metrics
-   - Detects potential performance bottlenecks
-   - Identifies optimization opportunities
+### Game Optimization
 
-3. **Optimization Layer**
-   - Applies memory optimization techniques
-   - Manages display brightness based on usage patterns
-   - Issues temperature alerts when thresholds are reached
+When a game profile is activated:
+1. Non-essential background apps are closed
+2. Display brightness is optimized
+3. CPU governor is adjusted (if possible)
+4. Priority is given to game processes
+5. Automatic memory management is configured
 
 <div align="center">
-  <img src="https://raw.githubusercontent.com/FireKid846/Ram_optimizer/main/screenshots/architecture.png" alt="System Architecture" width="80%">
+  <img src="https://raw.githubusercontent.com/user/Gaming_RAM_Optimizer/main/screenshots/optimization.png" alt="System Architecture" width="80%">
 </div>
 
-### Memory Optimization Techniques
+### Monitoring System
 
-The memory optimization function utilizes several techniques:
-- Clearing cached application data
-- Releasing unused memory pages
-- Optimizing background processes
-- Implementing adaptive resource allocation
+The monitoring system:
+1. Tracks RAM usage and availability
+2. Monitors CPU usage across cores
+3. Measures battery level and temperature
+4. Provides real-time feedback through notifications
 
-## 🔋 Battery Impact
+## 🔋 Battery Considerations
 
-The RAM Optimizer is designed with battery efficiency in mind:
-
-- **Minimal Footprint**: Typically uses less than 0.5% CPU when idle
-- **Smart Polling**: Adjusts monitoring frequency based on system load
-- **Battery Awareness**: Reduces functionality when battery is low
-- **Temperature Management**: Helps prevent overheating that can damage battery
+- **Gaming Mode**: Higher brightness and performance settings will use more battery
+- **Temperature Management**: The optimizer will warn you of high temperatures that could affect battery health
+- **Background Optimization**: When not gaming, the optimizer can reduce brightness to save battery
+- **Auto-boost**: Regularly freeing memory can help prevent battery-draining memory leaks
 
 ## 🛠️ Troubleshooting
 
@@ -198,51 +239,43 @@ The RAM Optimizer is designed with battery efficiency in mind:
 |-------|----------|
 | **"Command not found" error** | Ensure you've run `chmod +x ram_optimizer.sh` |
 | **Termux API errors** | Run `pkg install termux-api` and install the Termux:API app |
-| **Script crashes on startup** | Check system compatibility with `uname -a` |
-| **No temperature reading** | Some devices don't expose temperature sensors |
-| **Brightness control not working** | Ensure display permissions are granted to Termux |
-| **Menu options stop working** | This issue has been fixed in v1.0.1 |
-
-For additional help, open an issue on the GitHub repository.
+| **No temperature reading** | Some devices don't expose temperature sensors to non-root apps |
+| **"Failed to set CPU governor"** | Root access is required for CPU governor changes |
+| **Game not optimized properly** | Check if the game package name matches in the config file |
+| **Notification not showing** | Ensure Termux has notification permissions |
 
 ## 📱 Compatibility
 
-RAM Optimizer has been tested on various Android devices:
+Gaming RAM Optimizer has been tested on:
 
-- Samsung Galaxy series
-- Google Pixel devices
-- OnePlus phones
-- Xiaomi devices
+- Samsung Galaxy series (S20, S21, A52)
+- Google Pixel devices (4, 5, 6)
+- OnePlus phones (8, 9, Nord)
+- Xiaomi Redmi and POCO devices
 - Most devices running Android 7.0+
 
 ## 🔄 Update History
 
-### Version 1.0.1 (Current)
-- Fixed menu navigation issue with consecutive selections
-- Added robust error handling for all external commands
-- Improved dependency checking
-- Enhanced monitoring process with better logging
-- Added exit option in settings menu
-- Added better notification handling
-- Improved overall stability and resilience
-
-### Version 1.0.0
-- Initial release with core functionality
-- Display brightness management
-- System statistics monitoring
-- Battery temperature alerts
-- Basic memory optimization
+### Version 2.0.0 (Current)
+- Added game profile system for popular mobile games
+- Implemented gaming mode with dedicated optimizations
+- Added process priority management
+- Enhanced monitoring system with better notifications
+- Added automatic RAM boosting at configurable intervals
+- Improved command-line interface with more options
+- Added detailed system status view
 
 ### Planned Features
-- UI improvements
-- More granular control options
-- Scheduled optimization tasks
-- Custom optimization profiles
-- Improved statistics visualization
+- Additional game profiles
+- Custom profile creation tool
+- Game performance metrics tracking
+- Network optimization for online gaming
+- GPU monitoring and optimization
+- Thermal management profiles
 
 ## 👨‍💻 Development
 
-This project was developed by [FireKid846](https://github.com/FireKid846) as an open-source solution for Android system optimization.
+This project was developed to help mobile gamers get the best performance from their devices without requiring root access or expensive hardware upgrades.
 
 ### Contributing
 
@@ -256,9 +289,9 @@ Contributions are welcome! Here's how you can help:
 
 ### Development Guidelines
 - Maintain compatibility with non-rooted devices
+- Ensure game profiles are accurate and helpful
 - Keep resource usage minimal
-- Focus on battery efficiency
-- Follow shell scripting best practices
+- Focus on enhancing gaming experience
 - Document all new features thoroughly
 
 ## 📜 License
@@ -270,25 +303,25 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - The Termux development team for their incredible terminal emulator
 - F-Droid for hosting open source Android applications
 - All contributors and testers who have helped improve this project
-- The open source community for continuous inspiration
+- The mobile gaming community for inspiration and feedback
 
 ---
 
 <div align="center">
-  <p>If you find RAM Optimizer useful, please consider:</p>
-  <a href="https://github.com/FireKid846/Ram_optimizer/stargazers">
-    <img src="https://img.shields.io/github/stars/FireKid846/Ram_optimizer?style=social" alt="Star on GitHub">
+  <p>If you find Gaming RAM Optimizer useful, please consider starring the repository:</p>
+  <a href="https://github.com/user/Gaming_RAM_Optimizer/stargazers">
+    <img src="https://img.shields.io/github/stars/user/Gaming_RAM_Optimizer?style=social" alt="Star on GitHub">
   </a>
   &nbsp;&nbsp;
-  <a href="https://github.com/FireKid846/Ram_optimizer/fork">
-    <img src="https://img.shields.io/github/forks/FireKid846/Ram_optimizer?style=social" alt="Fork on GitHub">
+  <a href="https://github.com/user/Gaming_RAM_Optimizer/fork">
+    <img src="https://img.shields.io/github/forks/user/Gaming_RAM_Optimizer?style=social" alt="Fork on GitHub">
   </a>
   &nbsp;&nbsp;
-  <a href="https://github.com/FireKid846/Ram_optimizer/issues">
-    <img src="https://img.shields.io/github/issues/FireKid846/Ram_optimizer?style=social" alt="Report Issues">
+  <a href="https://github.com/user/Gaming_RAM_Optimizer/issues">
+    <img src="https://img.shields.io/github/issues/user/Gaming_RAM_Optimizer?style=social" alt="Report Issues">
   </a>
 </div>
 
 <p align="center">
-  Made with ❤️ by FireKid846
+  Game on! 🎮
 </p>

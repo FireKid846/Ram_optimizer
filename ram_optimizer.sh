@@ -24,7 +24,7 @@ ORIGINAL_SETTINGS_FILE="$SCRIPT_DIR/.original_settings"
 
 # Default settings
 MONITOR_INTERVAL=5  # Update system stats every 5 seconds
-VERSION="1.0.0"
+VERSION="1.0.1"
 
 # =================== UTILITY FUNCTIONS ===================
 
@@ -85,6 +85,13 @@ initialize_app() {
         fi
     fi
     
+    # Ensure necessary commands are available
+    if ! command -v jq &> /dev/null; then
+        log "${RED}ERROR: jq is not installed. Please install it using 'pkg install jq'${NC}"
+        echo -e "${RED}ERROR: jq is not installed. Please install it using 'pkg install jq'${NC}"
+        return 1
+    fi
+    
     log "${GREEN}Initialization complete${NC}"
     return 0
 }
@@ -104,9 +111,16 @@ get_system_stats() {
     local cpu_load=$(top -bn1 | grep "Cpu(s)" | awk '{print $2 + $4}')
     cpu_load=${cpu_load%.*}  # Remove decimal part
     
-    # Get battery info
-    local battery_level=$(termux-battery-status | jq -r '.percentage')
-    local battery_temp=$(termux-battery-status | jq -r '.temperature')
+    # Get battery info with error handling
+    local battery_level="N/A"
+    local battery_temp="N/A"
+    if command -v termux-battery-status &> /dev/null; then
+        battery_status=$(termux-battery-status 2>/dev/null)
+        if [ $? -eq 0 ]; then
+            battery_level=$(echo "$battery_status" | jq -r '.percentage')
+            battery_temp=$(echo "$battery_status" | jq -r '.temperature')
+        fi
+    fi
     
     # Format the output based on display mode
     if [ "$display_mode" = "display" ]; then
@@ -121,8 +135,11 @@ get_system_stats() {
 save_original_settings() {
     # Save current system settings to restore later
     
-    # Get current brightness
-    local brightness=$(termux-brightness get 2>/dev/null || echo "automatic")
+    # Get current brightness with error handling
+    local brightness="automatic"
+    if command -v termux-brightness &> /dev/null; then
+        brightness=$(termux-brightness get 2>/dev/null || echo "automatic")
+    fi
     
     # Save brightness setting to file
     echo "{
@@ -141,18 +158,26 @@ apply_display_settings() {
     # Load optimization settings from config
     local dim_brightness=$(jq -r '.settings.dim_brightness' "$CONFIG_FILE")
     
-    # Dim brightness
+    # Dim brightness with error handling
     if [ "$dim_brightness" = "true" ]; then
-        termux-brightness 100
-        log "Adjusted screen brightness"
+        if command -v termux-brightness &> /dev/null; then
+            termux-brightness 100 2>/dev/null
+            log "Adjusted screen brightness"
+        else
+            log "${YELLOW}termux-brightness not available, skipping brightness adjustment${NC}"
+        fi
     fi
     
-    # Show notification
-    termux-notification --id "ram_optimizer" \
-        --title "RAM Optimizer Active" \
-        --content "Display optimization active" \
-        --icon "memory" \
-        --type ongoing
+    # Show notification with error handling
+    if command -v termux-notification &> /dev/null; then
+        termux-notification --id "ram_optimizer" \
+            --title "RAM Optimizer Active" \
+            --content "Display optimization active" \
+            --icon "memory" \
+            --type ongoing 2>/dev/null
+    else
+        log "${YELLOW}termux-notification not available, skipping notification${NC}"
+    fi
     
     # Start system monitoring
     start_system_stats_monitoring
@@ -167,14 +192,16 @@ restore_settings() {
     if [ ! -f "$ORIGINAL_SETTINGS_FILE" ]; then
         log "${RED}Original settings file not found, using defaults${NC}"
         # Apply some reasonable defaults
-        termux-brightness 150
+        if command -v termux-brightness &> /dev/null; then
+            termux-brightness 150 2>/dev/null
+        fi
     else
         # Load original settings
         local brightness=$(jq -r '.brightness' "$ORIGINAL_SETTINGS_FILE")
         
-        # Restore brightness
-        if [ "$brightness" != "automatic" ]; then
-            termux-brightness $brightness
+        # Restore brightness with error handling
+        if [ "$brightness" != "automatic" ] && command -v termux-brightness &> /dev/null; then
+            termux-brightness $brightness 2>/dev/null
         fi
         
         log "Original settings restored from saved values"
@@ -183,15 +210,19 @@ restore_settings() {
     # Stop system monitoring
     stop_system_stats_monitoring
     
-    # Remove notification
-    termux-notification-remove "ram_optimizer"
+    # Remove notification with error handling
+    if command -v termux-notification-remove &> /dev/null; then
+        termux-notification-remove "ram_optimizer" 2>/dev/null
+    fi
     
-    # Show restoration notification
-    termux-notification --id "ram_optimizer_restore" \
-        --title "RAM Optimizer" \
-        --content "Optimization ended. Settings restored." \
-        --priority low \
-        --icon "check"
+    # Show restoration notification with error handling
+    if command -v termux-notification &> /dev/null; then
+        termux-notification --id "ram_optimizer_restore" \
+            --title "RAM Optimizer" \
+            --content "Optimization ended. Settings restored." \
+            --priority low \
+            --icon "check" 2>/dev/null
+    fi
     
     log "${GREEN}System restored to original settings${NC}"
 }
@@ -207,45 +238,58 @@ start_system_stats_monitoring() {
         rm "$MONITOR_PID_FILE"
     fi
     
-    # Start monitoring in a separate process
-    {
-        while true; do
-            # Get formatted stats for notification
-            local stats=$(get_system_stats "notification")
-            
-            # Update the notification with current stats
-            termux-notification --id "ram_optimizer" \
-                --title "RAM Optimizer Active" \
-                --content "Display optimization active" \
-                --icon "memory" \
-                --type ongoing \
-                --button1 "End" \
-                --button1-action "am broadcast --user 0 -a com.termux.addon.api.STOP -p com.termux" \
-                --message "$stats"
-            
-            # Check for critical battery temperature
-            local battery_temp=$(termux-battery-status | jq -r '.temperature')
-            if (( $(echo "$battery_temp > 42" | bc -l) )); then
-                termux-notification --id "ram_optimizer_warning" \
-                    --title "WARNING: High Temperature" \
-                    --content "Device temperature: ${battery_temp}°C - Consider taking a break" \
-                    --icon "warning" \
-                    --priority high
-            fi
-            
-            sleep $MONITOR_INTERVAL
-        done
-    } &
-    
-    # Save the PID of the monitoring process
-    echo $! > "$MONITOR_PID_FILE"
+    # Start monitoring in a separate process if termux-notification is available
+    if command -v termux-notification &> /dev/null; then
+        {
+            while true; do
+                # Get formatted stats for notification
+                local stats=$(get_system_stats "notification")
+                
+                # Update the notification with current stats
+                termux-notification --id "ram_optimizer" \
+                    --title "RAM Optimizer Active" \
+                    --content "Display optimization active" \
+                    --icon "memory" \
+                    --type ongoing \
+                    --button1 "End" \
+                    --button1-action "am broadcast --user 0 -a com.termux.addon.api.STOP -p com.termux" \
+                    --message "$stats" 2>/dev/null
+                
+                # Check for critical battery temperature
+                if command -v termux-battery-status &> /dev/null; then
+                    local battery_status=$(termux-battery-status 2>/dev/null)
+                    if [ $? -eq 0 ]; then
+                        local battery_temp=$(echo "$battery_status" | jq -r '.temperature')
+                        if (( $(echo "$battery_temp > 42" | bc -l 2>/dev/null) )); then
+                            termux-notification --id "ram_optimizer_warning" \
+                                --title "WARNING: High Temperature" \
+                                --content "Device temperature: ${battery_temp}°C - Consider taking a break" \
+                                --icon "warning" \
+                                --priority high 2>/dev/null
+                        fi
+                    fi
+                fi
+                
+                sleep $MONITOR_INTERVAL
+            done
+        } &
+        
+        # Save the PID of the monitoring process
+        echo $! > "$MONITOR_PID_FILE"
+        log "${GREEN}Monitoring process started with PID $(cat "$MONITOR_PID_FILE")${NC}"
+    else
+        log "${YELLOW}termux-notification not available, skipping monitor process${NC}"
+    fi
 }
 
 stop_system_stats_monitoring() {
     if [ -f "$MONITOR_PID_FILE" ]; then
+        log "${YELLOW}Stopping monitoring process with PID $(cat "$MONITOR_PID_FILE")${NC}"
         kill $(cat "$MONITOR_PID_FILE") 2>/dev/null
         rm "$MONITOR_PID_FILE"
         log "${YELLOW}System stats monitoring stopped${NC}"
+    else
+        log "${YELLOW}No monitoring process found to stop${NC}"
     fi
 }
 
@@ -254,11 +298,13 @@ stop_system_stats_monitoring() {
 manual_boost() {
     log "${CYAN}Performing manual memory boost...${NC}"
     
-    # Show notification
-    termux-notification --id "ram_optimizer_boost" \
-        --title "RAM Optimizer" \
-        --content "Performing memory boost..." \
-        --icon "memory"
+    # Show notification with error handling
+    if command -v termux-notification &> /dev/null; then
+        termux-notification --id "ram_optimizer_boost" \
+            --title "RAM Optimizer" \
+            --content "Performing memory boost..." \
+            --icon "memory" 2>/dev/null
+    fi
     
     # Get memory stats before boost
     local mem_before=$(free | grep Mem | awk '{print $4}')
@@ -273,16 +319,20 @@ manual_boost() {
     local mem_freed=$((mem_after - mem_before))
     
     # Update notification with results
-    termux-notification --id "ram_optimizer_boost" \
-        --title "RAM Optimizer" \
-        --content "Memory boost complete. Freed approximately ${mem_freed}KB" \
-        --icon "check"
+    if command -v termux-notification &> /dev/null; then
+        termux-notification --id "ram_optimizer_boost" \
+            --title "RAM Optimizer" \
+            --content "Memory boost complete. Freed approximately ${mem_freed}KB" \
+            --icon "check" 2>/dev/null
+    fi
     
-    log "${GREEN}Manual boost completed${NC}"
+    log "${GREEN}Manual boost completed - Freed ${mem_freed}KB${NC}"
     
     # Remove notification after a few seconds
     sleep 5
-    termux-notification-remove "ram_optimizer_boost"
+    if command -v termux-notification-remove &> /dev/null; then
+        termux-notification-remove "ram_optimizer_boost" 2>/dev/null
+    fi
 }
 
 # =================== SERVICE CONTROL FUNCTIONS ===================
@@ -316,10 +366,13 @@ edit_settings() {
     echo -e "2. Show Battery Stats: $(jq -r '.settings.show_battery_stats' "$CONFIG_FILE")"
     echo
     
-    echo -e "${YELLOW}Enter the number of the setting to toggle:${NC}"
+    echo -e "${YELLOW}Enter the number of the setting to toggle (or 0 to return):${NC}"
     read setting_number
     
     case $setting_number in
+        0)
+            return
+            ;;
         1)
             toggle_setting "dim_brightness" "Dim Brightness"
             ;;
@@ -346,12 +399,15 @@ toggle_setting() {
         new_value="true"
     fi
     
-    # Update config
+    # Update config with error handling
     local temp_file=$(mktemp)
-    jq ".settings.$setting_key = $new_value" "$CONFIG_FILE" > "$temp_file"
-    mv "$temp_file" "$CONFIG_FILE"
-    
-    log "${GREEN}$setting_name set to $new_value${NC}"
+    if jq ".settings.$setting_key = $new_value" "$CONFIG_FILE" > "$temp_file"; then
+        mv "$temp_file" "$CONFIG_FILE"
+        log "${GREEN}$setting_name set to $new_value${NC}"
+    else
+        rm "$temp_file"
+        log "${RED}Failed to update setting${NC}"
+    fi
 }
 
 # =================== MENU FUNCTIONS ===================
@@ -385,6 +441,7 @@ show_help() {
 }
 
 show_menu() {
+    # Main menu loop - fixed to properly handle repeated inputs
     while true; do
         show_banner
         echo -e "${CYAN}=== MAIN MENU ===${NC}"
@@ -395,33 +452,33 @@ show_menu() {
         echo -e "${GREEN}5.${NC} Edit Settings"
         echo -e "${GREEN}6.${NC} Exit"
         echo
-        echo -e "${YELLOW}Enter your choice:${NC}"
+        echo -e "${YELLOW}Enter your choice (1-6):${NC}"
         read choice
         
         case $choice in
             1)
                 start_optimizer
-                echo -e "${YELLOW}Press Enter to continue...${NC}"
+                echo -e "${YELLOW}Press Enter to return to menu...${NC}"
                 read
                 ;;
             2)
                 stop_optimizer
-                echo -e "${YELLOW}Press Enter to continue...${NC}"
+                echo -e "${YELLOW}Press Enter to return to menu...${NC}"
                 read
                 ;;
             3)
                 show_status
-                echo -e "${YELLOW}Press Enter to continue...${NC}"
+                echo -e "${YELLOW}Press Enter to return to menu...${NC}"
                 read
                 ;;
             4)
                 manual_boost
-                echo -e "${YELLOW}Press Enter to continue...${NC}"
+                echo -e "${YELLOW}Press Enter to return to menu...${NC}"
                 read
                 ;;
             5)
                 edit_settings
-                echo -e "${YELLOW}Press Enter to continue...${NC}"
+                echo -e "${YELLOW}Press Enter to return to menu...${NC}"
                 read
                 ;;
             6)
@@ -429,7 +486,8 @@ show_menu() {
                 exit 0
                 ;;
             *)
-                echo -e "${RED}Invalid option. Press Enter to continue...${NC}"
+                echo -e "${RED}Invalid option. Please enter a number between 1 and 6.${NC}"
+                echo -e "${YELLOW}Press Enter to continue...${NC}"
                 read
                 ;;
         esac
@@ -457,7 +515,11 @@ case "$1" in
         ;;
     *)
         # No arguments, launch interactive menu
-        initialize_app && show_menu
+        if initialize_app; then
+            show_menu
+        else
+            exit 1
+        fi
         ;;
 esac
 
